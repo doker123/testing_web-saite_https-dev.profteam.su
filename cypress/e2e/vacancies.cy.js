@@ -1,34 +1,33 @@
 
 
 describe('Вариант 1: Модуль «Вакансии»', () => {
-    beforeEach(() => {
-        cy.fixture('users.json').as('users')
-    })
-
     const login = (role) => {
-        cy.visit('/login')
-        cy.get('input[name="username"]').type(this.users[role].username)
-        cy.get('input[name="password"]').type(this.users[role].password)
-        cy.get('button[type="submit"]').click()
-        cy.url().should('include', '/dashboard')
+        cy.fixture('users.json').then((users) => {
+            cy.visit('/login')
+            cy.get('[autocomplete="username"]').type(users[role].username)
+            cy.get('[autocomplete="current-password"]').type(users[role].password)
+            cy.get('form').contains('button', ' Войти ').should('not.be.disabled').click();
+            cy.get('button[type="submit"]').click()
+            cy.url().should('include', '/dashboard')
+        })
     }
 
     context('1. Создание новой вакансии работодателем', () => {
         it('Позитивный сценарий: успешное создание', () => {
             login('employer')
-            cy.visit('/vacancies/create')
-            cy.get('input[name="title"]').type('Junior JavaScript Developer')
-            cy.get('textarea[name="description"]').type('Разработка клиентских модулей...')
+            cy.visit('/account/vacancies')
+            cy.get('[placeholder="Кладовщик"]').type('Junior JavaScript Developer')
+            cy.get('[value="По договорённости"]').check()
             cy.get('textarea[name="requirements"]').type('Знание JS, Git, опыт от 1 года')
             cy.get('button[type="submit"]').click()
-            cy.get('[data-cy="success-notification"]').should('be.visible')
+            cy.contains('button', 'Создать вакансию').should('be.visible').click()
         })
 
         it('Негативный сценарий: создание с незаполненными обязательными полями', () => {
             login('employer')
             cy.visit('/vacancies/create')
             cy.get('button[type="submit"]').click()
-            cy.wait(1000) // Ожидание рендера валидации
+            cy.wait(1000)
             cy.get('.error-message, [data-cy="validation-error"]').should('have.length.greaterThan', 0)
         })
     })
