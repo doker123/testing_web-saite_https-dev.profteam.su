@@ -15,7 +15,7 @@ describe('Вариант 1: Модуль «Вакансии»', () => {
 
         it('Негативный сценарий: создание с незаполненными обязательными полями', () => {
             cy.loginAs('employer')
-            cy.visit('/vacancies/create')
+            cy.visit('/account/vacancies')
             cy.contains('button', 'Обновить вакансию').click()
             cy.wait(1000)
             cy.get('.error-message, [data-cy="validation-error"]').should('have.length.greaterThan', 0)
