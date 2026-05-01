@@ -35,5 +35,18 @@ describe('Создание вакансии', () => {
             .should('be.enabled')
             .click();
 
+    });
+    it('Провальное создание вакансии', () =>{
+        cy.visit('/account/vacancies');
+        cy.contains('Создать вакансию').click();
+        cy.wait(2000);
+        cy.get('.desktop-modal').should('be.visible')
+
+        cy.get('.desktop-modal')
+            .contains('button', 'Обновить вакансию')
+            .scrollIntoView()
+            .should('be.disabled')
+        console.log("Кнопка не доступна для активации при не заполненных полях формы.");
     })
+
 });
